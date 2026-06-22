@@ -1,0 +1,25 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
+*.tfvars.backup
+crash.log
+
+# Secrets — never commit
+terraform.tfvars
+*.auto.tfvars
+
+# Env
+.env
+.env.local
+Env/
+
+# Bun
+node_modules/
+bun.lockb
+
+# OS
+.DS_Store
+Thumbs.db
