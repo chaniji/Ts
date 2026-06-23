@@ -1,0 +1,24 @@
+{
+  "name": "server-example",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run src/server.ts",
+    "build": "tsc",
+    "start": "node dist/src/server.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node-vault": "^0.9.13",
+    "@types/winston": "^2.4.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "node-vault": "^0.12.0",
+    "winston": "^3.19.0"
+  }
+}
