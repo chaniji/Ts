@@ -1,9 +1,13 @@
-import { loadSecrets } from "./config/vault";
+import { env } from "./config/env.js";
+import { log } from "./utils/logger.js";
 
-async function startServer() {
-  const env = await loadSecrets();
-  console.log(env.PORT);
-  console.log(env.DATABASE_URL);
-}
-
-startServer();
+log.info("Server config", {
+  port: env.port,
+  nodeEnv: env.nodeEnv,
+  corsOrigin: env.corsOrigin,
+  appUrl: env.appUrl,
+  emailFromAddress: env.emailFromAddress,
+  emailFromName: env.emailFromName,
+  sendGridApiKey: env.sendGridApiKey ? "***" : "NOT SET",
+  jwtSecret: env.jwtSecret ? "***" : "NOT SET",
+});

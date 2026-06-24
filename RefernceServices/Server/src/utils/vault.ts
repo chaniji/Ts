@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import vault from "node-vault";
-import { log } from "../utils/logger";
+import { log } from "./logger.js";
 
 config({ path: ".env" });
 

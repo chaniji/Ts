@@ -1,0 +1,1 @@
+2026-06-24 12:49:05 error [/home/chan/Works/Backend/RefernceServices/Server/src/config/env.ts:28] Invalid environment variables {"errors":{"_errors":[],"JWT_SECRET":{"_errors":["Too small: expected string to have >=32 characters"]}}}

@@ -19,6 +19,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "node-vault": "^0.12.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.4.3"
   }
 }
