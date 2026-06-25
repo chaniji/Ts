@@ -1,0 +1,1 @@
+2026-06-25 14:30:40 error [/home/chan/Works/Ts/Services/EstockMantra/src/utils/vault.ts:21] Failed to load secrets from vault {"err":{"response":{"statusCode":403,"body":{"errors":["permission denied"]}}}}
