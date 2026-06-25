@@ -37,6 +37,7 @@ log.info("Environment variables loaded", {
 });
 
 export const env = {
+  databaseurl: ParseResult.data.DATABASE_URL,
   port: ParseResult.data.PORT,
   nodeEnv: ParseResult.data.NODE_ENV,
   corsOrigin: ParseResult.data.CORS_ORIGIN,

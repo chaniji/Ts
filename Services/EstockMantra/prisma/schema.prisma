@@ -1,0 +1,399 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String            @id @default(uuid())
+  email                String            @unique
+  password             String?
+  createdAt            DateTime          @default(now())
+  name                 String?
+  provider             String            @default("password")
+  providerId           String?
+  role                 String            @default("user")
+  updatedAt            DateTime          @updatedAt
+  companyOwner         String?
+  disabled             Boolean           @default(false)
+  firstName            String?
+  lastName             String?
+  phone                String?
+  photoURL             String?
+  settings             Json?
+  status               String            @default("active")
+  resetPasswordExpires DateTime?
+  resetPasswordToken   String?           @unique
+  lastActiveAt         DateTime?
+  activities           ActivityLog[]
+  indentsApproved      Indent[]          @relation("IndentApprover")
+  indentsCreated       Indent[]          @relation("IndentCreator")
+  issuedMaterials      MaterialIssued[]  @relation("Issuer")
+  createdModules       Module[]
+  notifications        Notification[]
+  ownedProjects        Project[]         @relation("ProjectOwner")
+  qcApproved           QCCard[]          @relation("QCApprover")
+  qcPrepared           QCCard[]          @relation("QCPreparedBy")
+  stockChanges         StockHistory[]
+  ownedWorkspaces      Workspace[]       @relation("WorkspaceOwner")
+  memberships          WorkspaceMember[]
+
+  @@map("users")
+}
+
+model Project {
+  id               String           @id @default(uuid())
+  name             String
+  description      String?
+  ownerId          String
+  allowedAdmins    String[]         @default([])
+  allowedUsers     String[]         @default([])
+  totalItems       Int              @default(0)
+  totalInStock     Int              @default(0)
+  totalIssued      Int              @default(0)
+  totalClosedStock Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  workspaceId      String?
+  activities       ActivityLog[]
+  indents          Indent[]
+  items            Item[]
+  materialIssued   MaterialIssued[]
+  modules          Module[]
+  notifications    Notification[]
+  owner            User             @relation("ProjectOwner", fields: [ownerId], references: [id])
+  workspace        Workspace?       @relation(fields: [workspaceId], references: [id])
+  subCategories    SubCategory[]
+}
+
+model SubCategory {
+  id               String   @id @default(uuid())
+  projectId        String
+  name             String
+  mainCategory     String
+  totalItems       Int      @default(0)
+  totalInStock     Int      @default(0)
+  totalIssued      Int      @default(0)
+  totalClosedStock Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  items            Item[]
+  project          Project  @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+}
+
+model Item {
+  id               String           @id @default(uuid())
+  projectId        String
+  subCategoryId    String
+  mainCategory     String
+  name             String
+  value            String?
+  description      String?
+  package          String?
+  specification    String?
+  mfgPartNo        String?
+  vendorPartNo     String?
+  storageLocation  String?
+  unitPrice        Float?
+  supplier         String?
+  link             String?
+  invoiceNo        String?
+  quantityReceived Int              @default(0)
+  openingStock     Int              @default(0)
+  issued           Int              @default(0)
+  closedStock      Int              @default(0)
+  remarks          String?
+  threshold        Int?
+  deleted          Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  highlightColor   String?
+  project          Project          @relation(fields: [projectId], references: [id])
+  subCategory      SubCategory      @relation(fields: [subCategoryId], references: [id])
+  materialIssued   MaterialIssued[]
+  moduleIssues     ModuleIssue[]
+  moduleItems      ModuleItem[]
+  notifications    Notification[]
+  stockHistory     StockHistory[]
+
+  @@index([projectId])
+  @@index([subCategoryId])
+  @@index([closedStock])
+  @@index([deleted])
+}
+
+model MaterialIssued {
+  id               String    @id @default(uuid())
+  projectId        String
+  itemId           String
+  quantityIssued   Int
+  userId           String
+  issuedBy         String
+  receivedBy       String
+  purpose          String
+  issuedDate       DateTime  @default(now())
+  isReturnable     Boolean   @default(false)
+  returnDate       DateTime?
+  returnedBy       String?
+  returnReceivedBy String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  quantityReturned Int?
+  remarks          String?
+  returnRemarks    String?
+  item             Item      @relation(fields: [itemId], references: [id])
+  project          Project   @relation(fields: [projectId], references: [id])
+  issuer           User      @relation("Issuer", fields: [userId], references: [id])
+
+  @@index([itemId])
+  @@index([projectId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  targetUrl String?
+  projectId String?
+  itemId    String?
+  item      Item?    @relation(fields: [itemId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([read])
+  @@index([itemId])
+}
+
+model ActivityLog {
+  id             String   @id @default(uuid())
+  userId         String
+  action         String
+  entity         String
+  details        String
+  targetId       String?
+  targetType     String?
+  timestamp      DateTime @default(now())
+  itemId         String?
+  previousValue  String?
+  projectId      String?
+  quantityChange Int?
+  updatedValue   String?
+  project        Project? @relation(fields: [projectId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model StockHistory {
+  id            String   @id @default(uuid())
+  itemId        String
+  previousStock Int
+  newStock      Int
+  changeType    String
+  userId        String
+  reason        String?
+  createdAt     DateTime @default(now())
+  item          Item     @relation(fields: [itemId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Module {
+  id        String        @id @default(uuid())
+  projectId String
+  name      String
+  version   String
+  batchSize Int?
+  createdBy String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  creator   User          @relation(fields: [createdBy], references: [id])
+  project   Project       @relation(fields: [projectId], references: [id])
+  issues    ModuleIssue[]
+  items     ModuleItem[]
+}
+
+model ModuleItem {
+  id             String        @id @default(uuid())
+  moduleId       String
+  description    String
+  value          String
+  mfgPartNo      String
+  vendorPartNo   String
+  quantityPerPcb Int
+  quantityForX   Int
+  mappedItemId   String?
+  mainCategory   String?
+  name           String?
+  package        String?
+  specification  String?
+  subCategory    String?
+  issues         ModuleIssue[]
+  mappedItem     Item?         @relation(fields: [mappedItemId], references: [id])
+  module         Module        @relation(fields: [moduleId], references: [id])
+}
+
+model ModuleIssue {
+  id               String     @id @default(uuid())
+  moduleId         String
+  moduleItemId     String
+  quantityIssued   Int
+  issuedBy         String
+  issuedDate       DateTime   @default(now())
+  issuedTo         String
+  purpose          String
+  receivedBy       String
+  isReturnable     Boolean    @default(false)
+  returnDate       DateTime?
+  returnedBy       String?
+  returnReceivedBy String?
+  remarks          String?
+  mappedItemId     String?
+  quantityReturned Int?
+  createdAt        DateTime   @default(now())
+  mainCategory     String?
+  package          String?
+  specification    String?
+  subCategory      String?
+  mappedItem       Item?      @relation(fields: [mappedItemId], references: [id])
+  module           Module     @relation(fields: [moduleId], references: [id])
+  moduleItem       ModuleItem @relation(fields: [moduleItemId], references: [id])
+}
+
+model Workspace {
+  id        String            @id
+  name      String
+  ownerId   String
+  createdAt DateTime          @default(now())
+  projects  Project[]
+  qcCards   QCCard[]
+  indents   Indent[]
+  owner     User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  members   WorkspaceMember[]
+
+  @@index([ownerId])
+}
+
+model WorkspaceMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        String    @default("user")
+  status      String    @default("active")
+  joinedAt    DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Indent {
+  id           String       @id @default(uuid())
+  indentNumber String?
+  indentorId   String
+  approverId   String?
+  status       IndentStatus @default(DRAFT)
+  remarks      String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  projectId    String?
+  workspaceId  String?
+  workspace    Workspace?   @relation(fields: [workspaceId], references: [id])
+  approver     User?        @relation("IndentApprover", fields: [approverId], references: [id])
+  indentor     User         @relation("IndentCreator", fields: [indentorId], references: [id])
+  project      Project?     @relation(fields: [projectId], references: [id])
+  items        IndentItem[]
+  qcCards      QCCard[]
+
+  @@index([workspaceId])
+}
+
+model IndentItem {
+  id           String   @id @default(uuid())
+  indentId     String
+  itemName     String
+  description  String?
+  purpose      String[]
+  vendor       String[]
+  purchaseMode String
+  quantity     Int
+  unitPrice    Float
+  totalCost    Float
+  approved     Boolean?
+  remark       String?
+  indent       Indent   @relation(fields: [indentId], references: [id], onDelete: Cascade)
+}
+
+model QCCard {
+  id                   String                @id @default(uuid())
+  indentId             String?
+  materialName         String
+  materialCode         String?
+  vendor               String?
+  project              String
+  lotNumber            String?
+  receivedDate         DateTime?
+  qcDate               DateTime              @default(now())
+  qtyOrdered           Int
+  qtyReceived          Int                   @default(0)
+  criticalInspection   Boolean               @default(false)
+  qtyInspected         Int                   @default(0)
+  qtyAccepted          Int                   @default(0)
+  qtyRejected          Int                   @default(0)
+  rejectionReason      String?
+  rejectionDetails     String?
+  inspectionDetails    String?
+  remarks              String?
+  status               QCStatus              @default(DRAFT)
+  preparedById         String
+  approverId           String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  workspaceId          String?
+  workspace            Workspace?            @relation(fields: [workspaceId], references: [id])
+  approver             User                  @relation("QCApprover", fields: [approverId], references: [id])
+  indent               Indent?               @relation(fields: [indentId], references: [id])
+  preparedBy           User                  @relation("QCPreparedBy", fields: [preparedById], references: [id])
+  inspectionParameters InspectionParameter[]
+
+  @@index([workspaceId])
+}
+
+model InspectionParameter {
+  id            String  @id @default(uuid())
+  qcCardId      String
+  parameter     String
+  specification String
+  actualValue   String?
+  result        String? // "PASS" | "FAIL" | "PENDING"
+  qcCard        QCCard  @relation(fields: [qcCardId], references: [id], onDelete: Cascade)
+
+  @@index([qcCardId])
+}
+
+enum IndentStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  QC_PENDING
+  CLOSED
+}
+
+enum QCStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  STOCK_ADDED
+  CLOSED
+}
