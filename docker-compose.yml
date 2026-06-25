@@ -16,6 +16,25 @@ services:
       - vault-logs:/vault/logs
     restart: unless-stopped
 
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: qmsdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d qmsdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   vault-data:
   vault-logs:
+  postgres-data:

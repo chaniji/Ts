@@ -4,7 +4,23 @@ import { z } from "zod";
 
 const secrets = await loadSecrets();
 
-const envSchema = z.object({});
+const envSchema = z.object({
+  PORT: z.string().default("3001"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32),
+  CORS_ORIGIN: z.string().default("*"),
+  SENDGRID_API_KEY: z.string().optional(),
+  EMAIL_FROM_ADDRESS: z
+    .string()
+    .email()
+    .default("inventory.emicrolabs@gmail.com"),
+  EMAIL_FROM_NAME: z.string().default("E-Stock Mantra"),
+  APP_URL: z.string().url().optional(),
+  FRONTEND_URL: z.string().url().optional(),
+});
 
 const ParseResult = envSchema.safeParse(secrets);
 

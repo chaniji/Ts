@@ -23,3 +23,8 @@ bun.lockb
 # OS
 .DS_Store
 Thumbs.db
+
+#Prisma
+prisma/schema.prisma
+prisma/migrations/
+node_modules/.prisma/
