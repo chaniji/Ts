@@ -64,3 +64,6 @@
 2026-06-25 16:02:37 info [/home/chan/Works/Ts/Services/EstockMantra/src/utils/vault.ts:18] Secrets loaded {"keys":["APP_URL","DATABASE_URL","EMAIL_FROM_ADDRESS","EMAIL_FROM_NAME","FRONTEND_URL","JWT_SECRET","SENDGRID_API_KEY"]}
 2026-06-25 16:02:37 info [/home/chan/Works/Ts/Services/EstockMantra/src/config/env.ts:34] Environment variables loaded {"port":"3001","env":"development"}
 2026-06-25 16:02:37 info [/home/chan/Works/Ts/Services/EstockMantra/src/server.ts:6] Server running on port 3001 in development mode
+2026-06-25 16:06:45 info [/home/chan/Works/Ts/Services/EstockMantra/src/utils/vault.ts:11] Vault client created {"endpoint":"http://localhost:8200"}
+2026-06-25 16:06:45 info [/home/chan/Works/Ts/Services/EstockMantra/src/utils/vault.ts:18] Secrets loaded {"keys":["APP_URL","DATABASE_URL","EMAIL_FROM_ADDRESS","EMAIL_FROM_NAME","FRONTEND_URL","JWT_SECRET","SENDGRID_API_KEY"]}
+2026-06-25 16:06:45 info [/home/chan/Works/Ts/Services/EstockMantra/src/config/env.ts:34] Environment variables loaded {"port":"3001","env":"development"}
