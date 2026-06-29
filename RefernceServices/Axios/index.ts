@@ -1,5 +1,7 @@
 import axios from "axios";
+import { app } from "./server"
 
-const res = await axios.get("https://jsonplaceholder.typicode.com/todos/1");
-
+app.listen(3000);
+console.log("App Server Started")
+const res = await axios.get("http://localhost:3000/");
 console.log(res.data);
