@@ -1,5 +1,9 @@
+import StockGrid from "./components/StockTable.tsx";
+
 function App() {
-  return <div>excel</div>
+  return (
+    <StockGrid></StockGrid>
+  );
 }
 
 export default App
