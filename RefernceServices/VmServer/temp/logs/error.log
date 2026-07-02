@@ -1,2 +1,0 @@
-2026-06-24 11:21:21 error [/home/chan/Works/Backend/RefernceServices/Server/src/utils/vault.ts:21] Failed to load secrets from vault {"err":{"response":{"statusCode":404,"body":{"errors":["no handler for route \"app-secret/data/config\". route entry not found."]}}}}
-2026-06-24 11:22:41 error [/home/chan/Works/Backend/RefernceServices/Server/src/utils/vault.ts:21] Failed to load secrets from vault {"err":{"response":{"statusCode":404,"body":{"errors":["no handler for route \"app-secret/data/config\". route entry not found."]}}}}

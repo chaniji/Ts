@@ -2,7 +2,7 @@ import express from "express";
 import { log } from "./utils/logger.js";
 import helmet from "helmet";
 import compression from "compression";
-
+import { executeController } from "./controllers/sandboxController.js";
 const app = express();
 app.set("trust proxy", 1);
 app.use(express.json({ limit: "50mb" }));
@@ -19,7 +19,6 @@ app.get("/", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -34,6 +33,8 @@ app.get("/test", (_, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+app.post("/execute", executeController);
+
 log.info("Express Routes Initilized");
 
 export default app;
